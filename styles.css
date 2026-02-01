@@ -1,0 +1,146 @@
+/* YouTube Focus - Enhanced Styles */
+/* Optimized for smooth transitions and excellent UX */
+
+/* Smooth transitions for all hidden elements */
+ytd-watch-next-secondary-results-renderer,
+ytd-comments,
+#secondary.ytd-watch-flexy,
+.ytp-ce-element,
+ytd-rich-grid-renderer,
+ytd-reel-shelf-renderer {
+  transition: opacity 0.2s ease-out, max-height 0.2s ease-out;
+}
+
+/* Hide recommended videos below the video player */
+html.yf-hide-recommended ytd-watch-next-secondary-results-renderer,
+html.yf-hide-recommended #related,
+html.yf-hide-recommended #items.ytd-watch-next-secondary-results-renderer,
+html.yf-hide-recommended ytd-compact-autoplay-renderer,
+html.yf-hide-recommended .ytp-autonav-toggle-button {
+  display: none !important;
+}
+
+/* Hide comments section smoothly */
+html.yf-hide-comments ytd-comments,
+html.yf-hide-comments #comments,
+html.yf-hide-comments ytd-comments-header-renderer {
+  display: none !important;
+}
+
+/* Hide sidebar on video pages */
+html.yf-hide-sidebar #secondary.ytd-watch-flexy,
+html.yf-hide-sidebar #secondary-inner {
+  display: none !important;
+}
+
+/* Expand video player smoothly when sidebar is hidden */
+html.yf-hide-sidebar #primary.ytd-watch-flexy {
+  max-width: 100% !important;
+  transition: max-width 0.3s ease-in-out;
+}
+
+html.yf-hide-sidebar ytd-watch-flexy[theater] #primary.ytd-watch-flexy {
+  max-width: none !important;
+}
+
+/* Hide end screen video suggestions */
+html.yf-hide-endscreen .ytp-ce-element,
+html.yf-hide-endscreen .ytp-endscreen-content,
+html.yf-hide-endscreen .ytp-ce-covering-overlay,
+html.yf-hide-endscreen .ytp-ce-element-show,
+html.yf-hide-endscreen .ytp-ce-channel,
+html.yf-hide-endscreen .ytp-ce-video,
+html.yf-hide-endscreen .ytp-ce-playlist {
+  display: none !important;
+  opacity: 0 !important;
+}
+
+/* Hide home feed (recommended videos on homepage) */
+html.yf-hide-home ytd-browse[page-subtype="home"] ytd-rich-grid-renderer,
+html.yf-hide-home ytd-browse[page-subtype="home"] #contents.ytd-rich-grid-renderer,
+html.yf-hide-home ytd-two-column-browse-results-renderer[page-subtype="home"] #primary {
+  display: none !important;
+}
+
+/* Clean message when home feed is hidden */
+html.yf-hide-home ytd-browse[page-subtype="home"] #primary::after {
+  content: "🎯 YouTube home feed is hidden";
+  display: block;
+  padding: 60px 20px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--yt-spec-text-secondary);
+  background: var(--yt-spec-general-background-a);
+  border-radius: 12px;
+  margin: 20px;
+  animation: fadeIn 0.3s ease-in;
+}
+
+html.yf-hide-home ytd-browse[page-subtype="home"] #primary::before {
+  content: "Use the search bar or subscriptions to find videos you want to watch";
+  display: block;
+  padding: 20px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--yt-spec-text-secondary);
+  opacity: 0.8;
+}
+
+/* Hide Shorts sections */
+html.yf-hide-shorts ytd-reel-shelf-renderer,
+html.yf-hide-shorts ytd-rich-section-renderer:has(ytd-reel-shelf-renderer),
+html.yf-hide-shorts [is-shorts],
+html.yf-hide-shorts ytd-guide-entry-renderer:has([title="Shorts"]),
+html.yf-hide-shorts ytd-mini-guide-entry-renderer:has([aria-label="Shorts"]),
+html.yf-hide-shorts [aria-label="Shorts"],
+html.yf-hide-shorts ytd-reel-video-renderer,
+html.yf-hide-shorts [href*="/shorts/"] {
+  display: none !important;
+}
+
+/* Hide notifications bell */
+html.yf-hide-notifications ytd-notification-topbar-button-renderer,
+html.yf-hide-notifications #notification-count,
+html.yf-hide-notifications .yt-spec-button-shape-next--notification-count {
+  display: none !important;
+}
+
+/* Hide search suggestions dropdown */
+html.yf-hide-search-suggestions #search-suggestions,
+html.yf-hide-search-suggestions .sbsb_a,
+html.yf-hide-search-suggestions ytd-search-suggestions,
+html.yf-hide-search-suggestions .sbdd_b {
+  display: none !important;
+}
+
+/* Smooth fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Improve page load experience */
+html.yf-hide-home ytd-browse[page-subtype="home"],
+html.yf-hide-recommended ytd-watch-flexy,
+html.yf-hide-sidebar ytd-watch-flexy {
+  animation: fadeIn 0.2s ease-in;
+}
+
+/* Prevent layout shift when hiding elements */
+html.yf-hide-sidebar #primary.ytd-watch-flexy {
+  will-change: max-width;
+}
+
+/* Performance optimization: Prevent repaints on hidden elements */
+html.yf-hide-recommended #related,
+html.yf-hide-comments #comments,
+html.yf-hide-home ytd-rich-grid-renderer {
+  contain: layout style paint;
+}

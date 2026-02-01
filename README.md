@@ -1,428 +1,285 @@
-# YouTube Focus
+# 🎯 YouTube Focus - Enhanced Edition
 
-**Advanced Chrome Extension for Distraction-Free YouTube Viewing**
+**A fast, smooth, and safe Chrome extension to remove distractions from YouTube**
 
-Version 3.0 | Licensed for Personal Use
-
----
-
-## Overview
-
-YouTube Focus is a high-performance Chrome extension designed to eliminate distractions on YouTube. Built with advanced error handling, security features, and intelligent performance optimizations, this extension provides a seamless, focused viewing experience.
-
-### Key Features
-
-**Content Blocking**
-- Remove recommended video suggestions below the player
-- Hide comments section
-- Disable sidebar for full-width viewing
-- Block end-screen video suggestions
-- Hide homepage feed recommendations
-- Remove YouTube Shorts sections
-- Hide notification bell
-- Optional search suggestion filtering
-
-**Performance & Reliability**
-- Automatic error recovery with retry logic
-- Exponential backoff for transient failures
-- Real-time performance monitoring
-- Adaptive throttling based on page activity
-- Intelligent mutation detection
-- Zero performance impact on YouTube
-
-**Security & Privacy**
-- Content Security Policy enforcement
-- Input validation and type checking
-- Sanitized storage protection
-- No external network requests
-- No data collection or tracking
-- Operates entirely locally
-
-**User Experience**
-- Keyboard shortcuts for all features
-- Settings export and import
-- Visual health monitoring
-- Toast notifications for actions
-- Full keyboard navigation support
-- WCAG accessibility compliance
+Version 2.0 - Optimized for performance, UX, and accuracy
 
 ---
 
-## Installation
+## ✨ Features
 
-### Requirements
-- Google Chrome version 88 or higher
-- Approximately 100KB of disk space
+### 🚀 Core Blocking Features
+- **🎯 Hide Recommended Videos** - Remove video suggestions below the player
+- **💬 Hide Comments** - Hide the comments section entirely
+- **📱 Hide Sidebar** - Full-width, distraction-free video player
+- **🎬 Hide End Screen** - No video suggestions when your video ends
+- **🏠 Hide Home Feed** - Block the YouTube homepage recommendations
+- **📹 Hide Shorts** - Remove all YouTube Shorts sections
+- **🔔 Hide Notifications** - Hide the notification bell icon
+- **🔍 Hide Search Suggestions** - Optionally disable search autocomplete
 
-### Installation Steps
+### 💎 Enhanced UX Features
+- **Smooth Transitions** - All elements hide/show with elegant animations
+- **Visual Feedback** - Instant response to all your interactions
+- **Live Stats** - See how many features you have enabled
+- **One-Click Controls** - Enable all features or reset to defaults instantly
+- **Sync Across Devices** - Settings automatically sync via Chrome
+- **Zero Performance Impact** - Highly optimized code that doesn't slow down YouTube
+- **Beautiful Interface** - Modern, polished design that's a pleasure to use
 
-1. **Download the Extension**
-   - Download `youtube-focus.zip`
-   - Extract to a permanent location on your computer
-   - Do not delete the folder after installation
+---
+
+## 📦 Installation
+
+### Quick Install (Recommended)
+
+1. **Download and Extract**
+   ```
+   - Download the youtube-focus.zip file
+   - Extract it to a permanent location (like Documents/Extensions)
+   - Don't delete this folder after installation!
+   ```
 
 2. **Load into Chrome**
-   - Navigate to `chrome://extensions/`
-   - Enable "Developer mode" using the toggle in the top-right corner
+   ```
+   - Open Chrome and go to: chrome://extensions/
+   - Enable "Developer mode" (toggle in top-right)
    - Click "Load unpacked"
-   - Select the extracted `youtube-focus` folder
-   - Verify the extension appears in your extensions list
+   - Select the extracted youtube-focus folder
+   ```
 
-3. **Verify Installation**
-   - Look for the YouTube Focus icon in your Chrome toolbar
-   - Visit YouTube and confirm the extension is active
-   - Open the popup to customize your preferences
-
----
-
-## Usage
-
-### Basic Configuration
-
-Click the extension icon in your Chrome toolbar to access the settings panel. Toggle individual features on or off according to your preferences. Changes are saved automatically and synchronized across all Chrome instances signed into your account.
-
-### Keyboard Shortcuts
-
-The extension provides comprehensive keyboard shortcuts for efficient operation:
-
-**Feature Toggles**
-- `1` - Toggle recommended videos
-- `2` - Toggle comments
-- `3` - Toggle sidebar
-- `4` - Toggle end screen
-- `5` - Toggle home feed
-- `6` - Toggle Shorts
-- `7` - Toggle notifications
-- `8` - Toggle search suggestions
-
-**Quick Actions**
-- `Alt + A` - Enable all features
-- `Alt + R` - Reset to default settings
-- `Alt + E` - Access export/import menu
-
-**Navigation**
-- `Tab` - Move between settings
-- `Enter` or `Space` - Toggle focused setting
-- `Esc` - Close popup
-
-### Settings Management
-
-**Export Settings**
-1. Click the "Settings" button
-2. Select option 1
-3. Save the JSON file to your preferred location
-
-**Import Settings**
-1. Click the "Settings" button
-2. Select option 2
-3. Paste the JSON configuration
-4. Confirm the import
-
-**Copy to Clipboard**
-1. Click the "Settings" button
-2. Select option 3
-3. Settings are copied as JSON
+3. **Start Using**
+   ```
+   - The extension is now active!
+   - Click the 🎯 icon in your toolbar to customize
+   - Visit YouTube and enjoy a distraction-free experience
+   ```
 
 ---
 
-## Default Configuration
+## 🎮 How to Use
 
-The extension ships with the following default configuration:
+### Accessing Settings
+1. Click the **🎯 YouTube Focus** icon in your Chrome toolbar
+2. A beautiful popup will open showing all available options
 
-| Feature | Default State |
-|---------|---------------|
-| Hide Recommended Videos | Enabled |
-| Hide Comments | Enabled |
-| Hide Sidebar | Enabled |
-| Hide End Screen | Enabled |
-| Hide Home Feed | Enabled |
-| Hide Shorts | Enabled |
-| Hide Notifications | Enabled |
-| Hide Search Suggestions | Disabled |
+### Customizing Features
+- **Toggle Individual Features**: Click any setting or use the switch
+- **Enable All**: Click the "ALL ON" button to enable everything
+- **Reset**: Click "RESET" to restore default settings
+- **Live Stats**: See how many features are currently active
 
----
-
-## Technical Architecture
-
-### Performance Optimizations
-
-**Debounced Updates**
-- 100ms debounce delay for settings application
-- Prevents excessive DOM manipulation
-- Ensures smooth visual transitions
-
-**Adaptive Throttling**
-- Base throttle: 300ms
-- High-activity throttle: 500ms
-- Automatically adjusts based on page changes
-
-**Intelligent Mutation Detection**
-- Filters character data changes
-- Ignores trivial DOM modifications
-- Maintains buffer of last 100 mutations
-- Analyzes patterns for optimization
-
-**RequestAnimationFrame**
-- GPU-accelerated transitions
-- Synchronized with browser refresh rate
-- Eliminates visual jank
-
-### Error Handling
-
-**Multi-Layer Protection**
-- Try-catch blocks at all integration points
-- Automatic fallback to default settings
-- Detailed error logging with context
-- Graceful degradation on failures
-
-**Retry Logic**
-- Maximum 3 retry attempts
-- Exponential backoff (1s, 2s, 4s)
-- Applies to storage operations and observer initialization
-- Automatic recovery from transient errors
-
-**Health Monitoring**
-- Background service worker tracks extension health
-- Error count monitoring (degrades after 10 errors)
-- Real-time status indicator in popup
-- Self-healing capabilities
-
-### Security Features
-
-**Content Security Policy**
-- Strict script execution controls
-- Self-origin script sources only
-- Protection against code injection
-
-**Input Validation**
-- Type checking for all settings
-- Boolean-only value enforcement
-- Sanitization before storage
-- Protection against corrupted data
-
-**Storage Security**
-- Chrome sync storage encryption
-- Validated read/write operations
-- Atomic updates
-- Rollback on failure
+### Tips for Best Experience
+- Start with default settings (most features enabled)
+- Disable features one by one to find your perfect balance
+- Use "Hide Home Feed" to avoid getting sucked into recommendations
+- Keep "Hide End Screen" on to prevent autoplay rabbit holes
 
 ---
 
-## Privacy & Data Handling
+## ⚙️ Default Settings
 
-### Data Collection
-This extension does not collect, transmit, or store any user data beyond local settings preferences.
+Out of the box, these features are **enabled**:
+- ✅ Hide Recommended Videos
+- ✅ Hide Comments
+- ✅ Hide Sidebar
+- ✅ Hide End Screen Videos
+- ✅ Hide Home Feed
+- ✅ Hide Shorts
+- ✅ Hide Notifications
 
-### Permissions
-
-**storage**
-- Purpose: Save user preferences
-- Scope: Chrome sync storage only
-- Usage: Settings persistence across devices
-
-**host_permissions (*.youtube.com)**
-- Purpose: Apply content hiding rules
-- Scope: YouTube domain only
-- Usage: DOM manipulation for feature blocking
-
-### External Requests
-The extension makes zero external network requests. All operations are performed locally within the browser.
+This feature is **disabled** by default:
+- ❌ Hide Search Suggestions (you can enable if wanted)
 
 ---
 
-## Troubleshooting
+## 🛡️ Privacy & Safety
 
-### Extension Not Working
+### What This Extension Does
+- ✅ Runs **only** on YouTube.com (nowhere else)
+- ✅ Operates **100% locally** in your browser
+- ✅ Stores settings in Chrome's **secure sync storage**
+- ✅ Uses **optimized code** for maximum performance
+- ✅ **No tracking, no analytics, no external requests**
+- ✅ **Open source** - you can review all the code
 
-**Symptom:** Features not hiding on YouTube
-
-**Solutions:**
-1. Refresh the YouTube page (Ctrl/Cmd + R)
-2. Verify extension is enabled at `chrome://extensions/`
-3. Ensure Developer Mode is active
-4. Reload the extension using the refresh icon
-
-### Settings Not Saving
-
-**Symptom:** Changes reset after closing popup
-
-**Solutions:**
-1. Verify Chrome sync is enabled and working
-2. Check Chrome storage quota has not been exceeded
-3. Try resetting to defaults and reconfiguring
-4. Check browser console for error messages
-
-### Performance Issues
-
-**Symptom:** YouTube feels slower with extension active
-
-**Solutions:**
-1. Disable other YouTube extensions temporarily
-2. Update Chrome to the latest version
-3. Check browser console for performance warnings
-4. View metrics via `window.__YTFocusMetrics__()` in console
-
-### Health Indicator Red
-
-**Symptom:** Red dot in popup header
-
-**Solutions:**
-1. This indicates 10+ errors have occurred
-2. Reload the extension at `chrome://extensions/`
-3. Clear browser cache and cookies for YouTube
-4. If persistent, reinstall the extension
+### What This Extension Does NOT Do
+- ❌ No data collection
+- ❌ No external servers or APIs
+- ❌ No background processes
+- ❌ No permissions beyond storage and YouTube access
+- ❌ No ads, no monetization
 
 ---
 
-## Advanced Usage
+## 🚀 Performance Optimizations
 
-### Performance Monitoring
+This extension is built for **speed and smoothness**:
 
-Access detailed performance metrics through the browser console:
+- **Debounced Updates** - Prevents excessive DOM manipulation
+- **RequestAnimationFrame** - Smooth, GPU-accelerated transitions
+- **Efficient Observers** - Smart detection of page changes
+- **Batched Operations** - All changes applied at once
+- **CSS Containment** - Prevents unnecessary repaints
+- **Intelligent Throttling** - Reduces CPU usage
+- **SPA Navigation Support** - Works seamlessly with YouTube's page transitions
 
-```javascript
-// View current metrics
-window.__YTFocusMetrics__()
-
-// Output example:
-// {
-//   applyCount: 147,
-//   totalTime: 234.5,
-//   errors: 0
-// }
-```
-
-### Health Status API
-
-Query extension health from the popup context:
-
-```javascript
-chrome.runtime.sendMessage({ action: 'getHealth' }, (response) => {
-  console.log('Health:', response.healthy);
-  console.log('Errors:', response.errorCount);
-  console.log('Uptime:', response.uptime);
-});
-```
+**Result**: Virtually zero performance impact while providing instant visual updates!
 
 ---
 
-## Development
+## 🎨 UI/UX Highlights
 
-### Project Structure
+### Modern Design
+- Gradient purple header with clean typography
+- Card-based layout with subtle shadows
+- Smooth hover effects and transitions
+- Accessible color contrast
+
+### Smooth Interactions
+- Animated toggles with spring physics
+- Staggered fade-in animations on load
+- Scale feedback on button clicks
+- Toast notifications for actions
+
+### User-Friendly
+- Entire setting cards are clickable
+- Clear descriptions for each feature
+- Visual counter showing active features
+- Quick action buttons (All On / Reset)
+
+---
+
+## 📁 Project Structure
 
 ```
 youtube-focus/
-├── manifest.json          # Extension configuration and permissions
-├── background.js          # Service worker for health monitoring
-├── content.js            # Main logic and DOM manipulation
-├── styles.css            # CSS rules for hiding elements
-├── popup.html            # Settings interface markup
-├── popup.js              # Settings interface logic
-├── icon16.png           # Extension icon (16x16)
-├── icon48.png           # Extension icon (48x48)
+├── manifest.json          # Extension configuration
+├── content.js            # Main logic (optimized for performance)
+├── styles.css            # Hide rules + smooth transitions
+├── popup.html            # Beautiful settings interface
+├── popup.js              # Settings logic with UX enhancements
 ├── icon128.png          # Extension icon (128x128)
-├── README.md            # Documentation
-└── CHANGELOG.md         # Version history
+├── icon48.png           # Extension icon (48x48)
+├── icon16.png           # Extension icon (16x16)
+└── README.md            # This file
 ```
-
-### Configuration Constants
-
-Located in `content.js`:
-
-```javascript
-const CONFIG = {
-  DEBOUNCE_DELAY: 100,           // Settings apply delay (ms)
-  OBSERVER_THROTTLE: 300,        // Mutation observer throttle (ms)
-  MAX_RETRIES: 3,                // Maximum retry attempts
-  RETRY_DELAY: 1000,             // Base retry delay (ms)
-  PERFORMANCE_SAMPLE_RATE: 0.1   // Metrics sampling rate (10%)
-};
-```
-
-### Updating the Extension
-
-After modifying source files:
-
-1. Navigate to `chrome://extensions/`
-2. Locate "YouTube Focus"
-3. Click the refresh/reload icon
-4. Hard refresh any open YouTube tabs (Ctrl/Cmd + Shift + R)
 
 ---
 
-## Version History
+## 🔧 Troubleshooting
 
-### Version 3.0 (Current)
-- Advanced security features with CSP enforcement
-- Comprehensive error handling and retry logic
-- Health monitoring system with visual indicator
-- Keyboard shortcuts for all operations
-- Settings export and import functionality
-- Performance monitoring and metrics
-- Adaptive throttling and intelligent mutation detection
-- Enhanced accessibility and keyboard navigation
+### Extension not working?
+1. **Refresh YouTube** - Press Ctrl+R (Cmd+R on Mac) after installing
+2. **Check Extension Status** - Go to `chrome://extensions/` and ensure it's enabled
+3. **Verify Developer Mode** - Make sure Developer Mode toggle is ON
+4. **Reload Extension** - Click the refresh icon on the extension card
 
-### Version 2.0
-- Performance optimizations
-- Modern UI design with smooth transitions
-- Settings synchronization
-- Improved CSS efficiency
+### Some elements still showing?
+1. **YouTube Updates** - YouTube changes their code frequently
+2. **Toggle Settings** - Try turning the setting off and back on
+3. **Hard Refresh** - Press Ctrl+Shift+R to clear cache
+
+### Settings not saving?
+1. **Check Chrome Sync** - Ensure you're signed into Chrome
+2. **Storage Permissions** - Extension needs storage permission (should be automatic)
+3. **Try Reset** - Click "RESET" button then customize again
+
+### Performance issues?
+- This extension is highly optimized and shouldn't cause slowness
+- If you experience issues, try disabling other YouTube extensions
+- Make sure you're on the latest Chrome version
+
+---
+
+## 🔄 Updating the Extension
+
+When you make changes to the extension files:
+
+1. Go to `chrome://extensions/`
+2. Find "YouTube Focus"
+3. Click the **refresh/reload** icon (circular arrow)
+4. Refresh any open YouTube tabs
+
+---
+
+## 💡 Tips & Tricks
+
+### Maximum Focus Mode
+Enable all features for complete focus:
+1. Click the extension icon
+2. Click the "ALL ON" button
+3. YouTube will now only show content you explicitly search for
+
+### Balanced Mode (Recommended)
+Keep these enabled:
+- Hide Home Feed
+- Hide Recommended Videos  
+- Hide End Screen
+- Hide Shorts
+
+This prevents rabbit holes while still allowing comments and sidebar.
+
+### Research Mode
+Disable:
+- Hide Comments (for reading discussions)
+- Hide Sidebar (for seeing related content)
+
+Keep other features on to stay focused.
+
+---
+
+## 📊 Version History
+
+### Version 2.0 (Current)
+- ✨ Complete UI/UX redesign with modern interface
+- ⚡ Major performance optimizations
+- 🎨 Smooth animations and transitions
+- 📊 Live stats display
+- 🎯 One-click "All On" button
+- 🔒 Enhanced safety and error handling
+- 📱 Better responsive design
 
 ### Version 1.0
-- Initial release
-- Core content blocking features
-- Basic popup interface
-- Chrome sync storage integration
+- Initial release with core features
 
 ---
 
-## Support
+## 🤝 Contributing
 
-### Reporting Issues
-
-For technical issues or bugs:
-1. Check the Troubleshooting section
-2. Review the CHANGELOG for known issues
-3. Verify you're using the latest version
-4. Check browser console for error messages
-
-### Feature Requests
-
-This extension is designed for personal use and is feature-complete for its intended purpose. However, the codebase is structured to allow easy modification and extension.
+This is a personal-use extension, but feel free to:
+- Modify the code for your own needs
+- Suggest improvements
+- Report bugs or issues
+- Share with friends
 
 ---
 
-## License
+## 📄 License
 
-**Personal Use Only**
+**For Personal Use Only**
 
-This software is provided as-is for personal, non-commercial use. You may modify the source code for your own purposes. Redistribution, commercial use, or incorporation into other products is not permitted without explicit permission.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+This extension is provided as-is for personal use. Feel free to modify and customize it for yourself.
 
 ---
 
-## Credits
+## 🙏 Credits
 
-**Inspired By:** Unhook extension  
-**Technology Stack:** Vanilla JavaScript, Chrome Extension Manifest V3, CSS3  
-**Development Focus:** Performance, Security, Accessibility, User Experience
-
----
-
-## Technical Specifications
-
-**Manifest Version:** 3  
-**Minimum Chrome Version:** 88  
-**Package Size:** ~20KB (compressed)  
-**Memory Footprint:** <5MB  
-**CPU Impact:** <0.1% average  
-**Permissions Required:** storage, host_permissions (youtube.com)  
-**Network Requests:** None  
-**External Dependencies:** None
+Inspired by the excellent **Unhook** extension, but built from scratch with:
+- Enhanced performance optimizations
+- Modern UI/UX design
+- Additional features and controls
+- Improved code quality and safety
 
 ---
 
-**Last Updated:** February 2026  
-**Current Version:** 3.0  
-**Status:** Production Ready
+## 📞 Support
+
+If you encounter any issues:
+1. Check the Troubleshooting section above
+2. Try disabling and re-enabling the extension
+3. Make sure you're using the latest version of Chrome
+
+---
+
+**Enjoy a more focused, productive YouTube experience! 🎯**
