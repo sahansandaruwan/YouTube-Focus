@@ -1,5 +1,5 @@
-// YouTube Focus - Advanced Content Script v3.0
-// Enhanced with: error recovery, performance monitoring, retry logic, and advanced security
+// YouTube Focus - Advanced Content Script v3.1
+// Added: Master on/off toggle, dynamic enable/disable, enhanced state management
 
 (function() {
   'use strict';
@@ -10,11 +10,12 @@
     OBSERVER_THROTTLE: 300,
     MAX_RETRIES: 3,
     RETRY_DELAY: 1000,
-    PERFORMANCE_SAMPLE_RATE: 0.1 // 10% of operations
+    PERFORMANCE_SAMPLE_RATE: 0.1
   };
 
   // Default settings with validation
   const defaultSettings = {
+    extensionEnabled: true, // Master toggle
     hideRecommendedVideos: true,
     hideComments: true,
     hideSidebar: true,
@@ -36,6 +37,7 @@
     totalTime: 0,
     errors: 0
   };
+  let extensionEnabled = true;
 
   // Advanced debounced apply with retry logic
   function scheduleApply() {
@@ -63,6 +65,27 @@
     return validated;
   }
 
+  // Remove all extension classes
+  function removeAllClasses() {
+    const html = document.documentElement;
+    if (!html) return;
+
+    const classes = [
+      'yf-hide-recommended',
+      'yf-hide-comments',
+      'yf-hide-sidebar',
+      'yf-hide-endscreen',
+      'yf-hide-home',
+      'yf-hide-shorts',
+      'yf-hide-notifications',
+      'yf-hide-search-suggestions'
+    ];
+
+    classes.forEach(className => {
+      html.classList.remove(className);
+    });
+  }
+
   // Performance-monitored settings application with error recovery
   function applySettings() {
     if (isApplying) return;
@@ -81,6 +104,14 @@
 
           // Validate settings before applying
           settings = validateSettings(settings);
+
+          // Check if extension is enabled
+          if (!extensionEnabled || !settings.extensionEnabled) {
+            // Remove all classes when disabled
+            removeAllClasses();
+            isApplying = false;
+            return;
+          }
 
           // Batch all class changes for optimal performance
           const classes = {
@@ -105,7 +136,6 @@
             performanceMetrics.applyCount++;
             performanceMetrics.totalTime += duration;
             
-            // Log if unusually slow (>16ms for 60fps)
             if (duration > 16) {
               console.warn(`YouTube Focus: Slow apply (${duration.toFixed(2)}ms)`);
             }
@@ -131,7 +161,6 @@
     performanceMetrics.errors++;
     console.error('YouTube Focus: Apply error', error);
 
-    // Retry logic
     if (retryCount < CONFIG.MAX_RETRIES) {
       retryCount++;
       console.log(`YouTube Focus: Retrying (${retryCount}/${CONFIG.MAX_RETRIES})`);
@@ -156,26 +185,29 @@
         if (chrome.runtime.lastError) {
           console.error('YouTube Focus: Storage error', chrome.runtime.lastError);
           
-          // Retry with exponential backoff
           if (attempt < maxAttempts) {
             console.log(`YouTube Focus: Retrying storage load (${attempt}/${maxAttempts})`);
             setTimeout(() => loadSettings(attempt + 1), backoffDelay);
           } else {
             console.error('YouTube Focus: Failed to load settings, using defaults');
             settings = { ...defaultSettings };
+            extensionEnabled = true;
             applySettings();
           }
         } else {
           // Validate and sanitize loaded settings
           settings = validateSettings(items);
+          extensionEnabled = settings.extensionEnabled !== false;
           applySettings();
           
-          console.log('YouTube Focus: Settings loaded successfully');
+          console.log('YouTube Focus: Settings loaded successfully', 
+                      extensionEnabled ? '(ENABLED)' : '(DISABLED)');
         }
       });
     } catch (error) {
       console.error('YouTube Focus: Critical error loading settings', error);
       settings = { ...defaultSettings };
+      extensionEnabled = true;
       applySettings();
     }
   }
@@ -187,10 +219,15 @@
         let hasValidChanges = false;
         
         for (const key in changes) {
-          // Only process known, valid settings
           if (settings.hasOwnProperty(key) && typeof changes[key].newValue === 'boolean') {
             settings[key] = changes[key].newValue;
             hasValidChanges = true;
+            
+            // Update master toggle state
+            if (key === 'extensionEnabled') {
+              extensionEnabled = changes[key].newValue;
+              console.log('YouTube Focus: Master toggle changed to', extensionEnabled);
+            }
           } else {
             console.warn(`YouTube Focus: Invalid setting change ignored: ${key}`);
           }
@@ -205,27 +242,41 @@
     console.error('YouTube Focus: Error setting up storage listener', error);
   }
 
-  // Advanced observer with intelligent throttling and pattern detection
+  // Listen for messages from background script
+  try {
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+      if (request.action === 'masterToggleChanged') {
+        extensionEnabled = request.enabled;
+        settings.extensionEnabled = request.enabled;
+        scheduleApply();
+        sendResponse({ success: true });
+      }
+      return true;
+    });
+  } catch (error) {
+    console.error('YouTube Focus: Error setting up message listener', error);
+  }
+
+  // Advanced observer with intelligent throttling
   let observerTimeout = null;
   let mutationBuffer = [];
   const observer = new MutationObserver((mutations) => {
-    // Buffer mutations for analysis
+    // Skip if extension is disabled
+    if (!extensionEnabled || !settings.extensionEnabled) {
+      return;
+    }
+
     mutationBuffer.push(...mutations);
     
-    // Clear old buffer entries (keep last 100)
     if (mutationBuffer.length > 100) {
       mutationBuffer = mutationBuffer.slice(-100);
     }
 
-    // Detect meaningful changes with intelligent filtering
     const hasRelevantChange = mutations.some(mutation => {
-      // Ignore text-only changes
       if (mutation.type === 'characterData') return false;
       
-      // Check for actual element additions/removals
       const hasNodes = mutation.addedNodes.length > 0 || mutation.removedNodes.length > 0;
       
-      // Filter out trivial changes (single text nodes, etc.)
       if (hasNodes) {
         const relevantNodes = Array.from(mutation.addedNodes).concat(Array.from(mutation.removedNodes))
           .filter(node => node.nodeType === Node.ELEMENT_NODE);
@@ -240,12 +291,11 @@
         clearTimeout(observerTimeout);
       }
       
-      // Adaptive throttle based on activity
       const throttleDelay = mutationBuffer.length > 50 ? 500 : CONFIG.OBSERVER_THROTTLE;
       
       observerTimeout = setTimeout(() => {
         scheduleApply();
-        mutationBuffer = []; // Clear buffer after processing
+        mutationBuffer = [];
       }, throttleDelay);
     }
   });
@@ -262,8 +312,8 @@
       observer.observe(targetNode, {
         childList: true,
         subtree: true,
-        attributes: false,  // Disabled for performance
-        characterData: false  // Disabled for performance
+        attributes: false,
+        characterData: false
       });
 
       return true;
@@ -300,23 +350,20 @@
         }
       }
       
-      // Start observer initialization
       if (document.documentElement) {
         tryInitObserver();
       } else {
-        // Wait for document to be ready
         setTimeout(tryInitObserver, 100);
       }
 
-      // Log successful initialization
-      console.log('YouTube Focus v3.0: Initialized successfully 🎯');
+      console.log('YouTube Focus v3.1: Initialized successfully 🎯');
       
     } catch (error) {
       console.error('YouTube Focus: Critical initialization error', error);
       
-      // Attempt basic functionality even if initialization failed
       try {
         settings = { ...defaultSettings };
+        extensionEnabled = true;
         applySettings();
       } catch (fallbackError) {
         console.error('YouTube Focus: Fallback initialization failed', fallbackError);
@@ -328,18 +375,16 @@
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initialize, { once: true });
   } else {
-    // DOM already loaded
     initialize();
   }
 
-  // Enhanced SPA navigation handler with debouncing
+  // Enhanced SPA navigation handler
   let navTimeout = null;
   new MutationObserver(() => {
     const currentUrl = location.href;
     if (currentUrl !== lastUrl) {
       lastUrl = currentUrl;
       
-      // Debounce navigation changes
       if (navTimeout) clearTimeout(navTimeout);
       navTimeout = setTimeout(() => {
         console.log('YouTube Focus: Page navigation detected');
@@ -351,7 +396,7 @@
     childList: true
   });
 
-  // Comprehensive cleanup with error handling
+  // Comprehensive cleanup
   window.addEventListener('beforeunload', () => {
     try {
       if (observer) observer.disconnect();
@@ -359,7 +404,6 @@
       if (observerTimeout) clearTimeout(observerTimeout);
       if (navTimeout) clearTimeout(navTimeout);
       
-      // Log performance metrics
       if (performanceMetrics.applyCount > 0) {
         const avgTime = performanceMetrics.totalTime / performanceMetrics.applyCount;
         console.log(`YouTube Focus: Avg apply time: ${avgTime.toFixed(2)}ms, Errors: ${performanceMetrics.errors}`);
@@ -369,9 +413,10 @@
     }
   }, { once: true });
 
-  // Expose performance metrics (for debugging)
+  // Expose performance metrics
   if (typeof window !== 'undefined') {
     window.__YTFocusMetrics__ = () => performanceMetrics;
+    window.__YTFocusEnabled__ = () => extensionEnabled;
   }
 
 })();

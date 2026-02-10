@@ -1,5 +1,44 @@
 # YouTube Focus - Changelog
 
+## Version 3.1 - Master Toggle Update (NEW!)
+
+### 🔥 Master On/Off Toggle
+- **Global Extension Control** - Single toggle to enable/disable all features
+- **Visual Status Indicators** - Clear "Active" vs "Inactive" status display
+- **Dynamic Icon Updates** - Extension icon changes based on state
+- **Badge System** - Shows "OFF" badge when extension is disabled
+- **State Persistence** - All settings preserved when toggling on/off
+- **Smooth Transitions** - UI smoothly adapts to state changes
+
+### ⌨️ Enhanced Keyboard Shortcuts
+- **Space** - Toggle extension on/off (new!)
+- **Alt+A** - Enable all features
+- **Alt+R** - Reset to defaults
+- **Alt+E** - Export/import settings
+- **1-8** - Toggle individual features
+
+### 🎨 UI/UX Improvements
+- **Prominent Master Toggle** - Large, easy-to-use switch at top of popup
+- **Status Badge** - Color-coded active/inactive indicators
+- **State-Aware Styling** - Interface adapts colors based on extension state
+- **Improved Visual Feedback** - Enhanced animations and transitions
+- **Settings Dimming** - Individual settings dim when extension disabled
+- **Better Icons** - Updated emoji icons for status display
+
+### 🔧 Technical Enhancements
+- **Improved State Management** - Centralized extension state tracking
+- **Background Service Updates** - Icon management and state synchronization
+- **Content Script Enhancements** - Dynamic enable/disable without reload
+- **Message Passing** - Real-time communication between components
+- **Error Recovery** - Better handling of state transitions
+
+### 📊 New Features
+- **Master Toggle API** - Background script manages global state
+- **State Synchronization** - All tabs update when master toggle changes
+- **Settings Preservation** - Individual settings retained during toggle
+- **Visual State Feedback** - Multiple UI elements reflect extension state
+- **Keyboard Accessibility** - Full keyboard control of master toggle
+
 ## Version 3.0 - Advanced Security & UX Update
 
 ### 🛡️ Advanced Security Features
@@ -70,3 +109,25 @@
 - Core blocking features
 - Basic popup interface
 - Chrome sync storage
+
+---
+
+## Upgrade Notes
+
+### Upgrading from v3.0 to v3.1
+- Master toggle feature automatically added
+- All existing settings preserved
+- New `extensionEnabled` setting added (defaults to `true`)
+- Extension icon may update to show state
+- No manual configuration needed
+
+### Upgrading from v2.0 to v3.0
+- Settings format unchanged, all preferences preserved
+- Health monitoring runs automatically in background
+- Performance improvements are automatic
+- Keyboard shortcuts work immediately
+
+### Upgrading from v1.0 to v2.0
+- Settings automatically migrated
+- UI completely redesigned
+- All features remain functional

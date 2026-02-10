@@ -1,9 +1,10 @@
-// YouTube Focus v3.0 - Advanced Popup Script
-// Features: Keyboard shortcuts, health monitoring, settings export/import, enhanced UX
+// YouTube Focus v3.1 - Advanced Popup Script
+// Added: Master on/off toggle, enhanced UX, improved state management
 
 'use strict';
 
 const defaultSettings = {
+  extensionEnabled: true, // Master toggle
   hideRecommendedVideos: true,
   hideComments: true,
   hideSidebar: true,
@@ -17,15 +18,50 @@ const defaultSettings = {
 // State
 let currentSettings = { ...defaultSettings };
 let healthCheckInterval = null;
+let extensionEnabled = true;
+
+// Update UI based on extension state
+function updateExtensionState(enabled) {
+  extensionEnabled = enabled;
+  
+  const header = document.getElementById('header');
+  const masterSection = document.getElementById('masterToggleSection');
+  const settingsContainer = document.getElementById('settingsContainer');
+  const statusBadge = document.getElementById('statusBadge');
+  const masterIcon = document.getElementById('masterIcon');
+  
+  if (enabled) {
+    header.classList.remove('disabled');
+    masterSection.classList.remove('disabled');
+    settingsContainer.classList.remove('disabled');
+    statusBadge.className = 'status-badge active';
+    statusBadge.textContent = 'Active - Blocking Distractions';
+    masterIcon.textContent = '⚡';
+  } else {
+    header.classList.add('disabled');
+    masterSection.classList.add('disabled');
+    settingsContainer.classList.add('disabled');
+    statusBadge.className = 'status-badge inactive';
+    statusBadge.textContent = 'Inactive - Extension Disabled';
+    masterIcon.textContent = '⏸️';
+  }
+  
+  // Update icon in background
+  chrome.runtime.sendMessage({ 
+    action: 'updateIcon', 
+    enabled: enabled 
+  }).catch(() => {});
+}
 
 // Update the active count display with animation
 function updateEnabledCount() {
-  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+  const checkboxes = document.querySelectorAll('.setting input[type="checkbox"]');
   const enabledCount = Array.from(checkboxes).filter(cb => cb.checked).length;
   const countElement = document.getElementById('enabledCount');
   
   if (countElement) {
     countElement.textContent = enabledCount;
+    countElement.style.transition = 'transform 0.2s';
     countElement.style.transform = 'scale(1.2)';
     setTimeout(() => {
       countElement.style.transform = 'scale(1)';
@@ -45,8 +81,17 @@ function loadSettings() {
 
       currentSettings = items;
       
+      // Set master toggle
+      const masterToggle = document.getElementById('masterToggle');
+      if (masterToggle) {
+        const enabled = items.extensionEnabled !== false;
+        masterToggle.checked = enabled;
+        updateExtensionState(enabled);
+      }
+      
       // Set checkbox states
       for (const key in items) {
+        if (key === 'extensionEnabled') continue;
         const checkbox = document.getElementById(key);
         if (checkbox) {
           checkbox.checked = items[key];
@@ -78,6 +123,12 @@ function saveSetting(key, value) {
         showToast('⚠️ Error saving', 'error');
       } else {
         currentSettings[key] = value;
+        
+        // Update extension state if master toggle
+        if (key === 'extensionEnabled') {
+          updateExtensionState(value);
+          showToast(value ? '✓ Extension enabled' : '✓ Extension disabled');
+        }
       }
     });
   } catch (error) {
@@ -86,8 +137,24 @@ function saveSetting(key, value) {
   }
 }
 
+// Setup master toggle
+const masterToggle = document.getElementById('masterToggle');
+if (masterToggle) {
+  masterToggle.addEventListener('change', (e) => {
+    const enabled = e.target.checked;
+    saveSetting('extensionEnabled', enabled);
+    
+    // Visual feedback
+    const masterSection = document.getElementById('masterToggleSection');
+    masterSection.style.transform = 'scale(0.98)';
+    setTimeout(() => {
+      masterSection.style.transform = 'scale(1)';
+    }, 100);
+  });
+}
+
 // Setup checkbox event listeners
-document.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
+document.querySelectorAll('.setting input[type="checkbox"]').forEach((checkbox) => {
   checkbox.addEventListener('change', (e) => {
     const settingDiv = e.target.closest('.setting');
     
@@ -144,7 +211,16 @@ document.getElementById('resetBtn').addEventListener('click', () => {
           return;
         }
 
+        // Update master toggle
+        const masterToggle = document.getElementById('masterToggle');
+        if (masterToggle) {
+          masterToggle.checked = defaultSettings.extensionEnabled;
+          updateExtensionState(defaultSettings.extensionEnabled);
+        }
+
+        // Update settings
         for (const key in defaultSettings) {
+          if (key === 'extensionEnabled') continue;
           const checkbox = document.getElementById(key);
           if (checkbox) {
             checkbox.checked = defaultSettings[key];
@@ -170,8 +246,11 @@ document.getElementById('allOnBtn').addEventListener('click', () => {
   setTimeout(() => {
     btn.style.transform = 'scale(1)';
     
-    const allOnSettings = {};
+    const allOnSettings = {
+      extensionEnabled: true
+    };
     for (const key in defaultSettings) {
+      if (key === 'extensionEnabled') continue;
       allOnSettings[key] = true;
     }
     
@@ -182,7 +261,16 @@ document.getElementById('allOnBtn').addEventListener('click', () => {
           return;
         }
 
+        // Update master toggle
+        const masterToggle = document.getElementById('masterToggle');
+        if (masterToggle) {
+          masterToggle.checked = true;
+          updateExtensionState(true);
+        }
+
+        // Update settings
         for (const key in allOnSettings) {
+          if (key === 'extensionEnabled') continue;
           const checkbox = document.getElementById(key);
           if (checkbox) {
             checkbox.checked = true;
@@ -257,7 +345,16 @@ function importSettings() {
         return;
       }
 
+      // Update master toggle
+      const masterToggle = document.getElementById('masterToggle');
+      if (masterToggle) {
+        masterToggle.checked = validatedSettings.extensionEnabled;
+        updateExtensionState(validatedSettings.extensionEnabled);
+      }
+
+      // Update settings
       for (const key in validatedSettings) {
+        if (key === 'extensionEnabled') continue;
         const checkbox = document.getElementById(key);
         if (checkbox) {
           checkbox.checked = validatedSettings[key];
@@ -311,6 +408,18 @@ function showToast(message, type = 'success') {
 
 // Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
+  // Space to toggle extension
+  if (e.key === ' ' && e.target.tagName !== 'INPUT') {
+    e.preventDefault();
+    const masterToggle = document.getElementById('masterToggle');
+    if (masterToggle) {
+      masterToggle.checked = !masterToggle.checked;
+      masterToggle.dispatchEvent(new Event('change'));
+    }
+    return;
+  }
+
+  // Number keys for individual settings
   const key = parseInt(e.key);
   if (key >= 1 && key <= 8) {
     e.preventDefault();
@@ -330,16 +439,19 @@ document.addEventListener('keydown', (e) => {
     }
   }
   
+  // Alt+A for All On
   if (e.altKey && e.key === 'a') {
     e.preventDefault();
     document.getElementById('allOnBtn').click();
   }
   
+  // Alt+R for Reset
   if (e.altKey && e.key === 'r') {
     e.preventDefault();
     document.getElementById('resetBtn').click();
   }
   
+  // Alt+E for Export
   if (e.altKey && e.key === 'e') {
     e.preventDefault();
     document.getElementById('exportBtn').click();
@@ -383,6 +495,6 @@ window.addEventListener('beforeunload', () => {
 });
 
 setTimeout(() => {
-  const firstSetting = document.querySelector('.setting');
-  if (firstSetting) firstSetting.focus();
+  const masterSection = document.getElementById('masterToggleSection');
+  if (masterSection) masterSection.focus();
 }, 100);
